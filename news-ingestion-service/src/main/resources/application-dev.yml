@@ -1,0 +1,32 @@
+spring:
+  data:
+    mongodb:
+      uri: <URI-MONGODB>
+      database: <NAME-DATABASE>
+
+  rabbitmq:
+    host: <SERVER-RABBITMQ>
+    port: <PORT-SERVER-RABBITMQ>
+    username: <USERNAMESERVER-RABBIT>
+    password: <PASS-SERVER-RABBIT>
+    template:
+      default-receive-queue: raw-news-queue
+
+  elasticsearch:
+    client:
+      hosts: <HOST-ELASTICSEARCH>
+
+  logging:
+    level:
+      root: INFO
+      org.springframework: DEBUG
+
+  # Additional Configuration
+  reactor:
+    netty:
+      ioWorkerCount: 4  # Adjust based on your server hardware
+
+endpoint:
+  newsapi:
+    baseUrl: https://newsapi.org/v2
+    apiKey: <APIKEY-SERVICE-NEWSAPI>

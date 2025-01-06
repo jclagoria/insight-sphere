@@ -1,0 +1,45 @@
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - /home/jlagoria/mount/Data/docker/.rabbitmq_data:/var/lib/rabbitmq
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node # Modo de nodo único para desarrollo
+      - xpack.security.enabled=false # Desactiva la seguridad para simplificar
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m # Configuración de memoria JVM
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"   # Puerto HTTP para Elasticsearch
+      - "9300:9300"   # Puerto para comunicación interna entre nodos
+    volumes:
+      - /home/jlagoria/mount/Data/docker/.elasticsearch_data:/usr/share/elasticsearch/data
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.10.2
+    container_name: kibana
+    ports:
+      - "5601:5601" # Puerto para acceder al panel de Kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200 # Conexión a Elasticsearch
+    depends_on:
+      - elasticsearch # Espera que Elasticsearch esté en funcionamiento
+
+volumes:
+  rabbitmq_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
