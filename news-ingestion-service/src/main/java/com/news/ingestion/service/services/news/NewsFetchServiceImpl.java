@@ -1,6 +1,7 @@
 package com.news.ingestion.service.services.news;
 
 import com.news.ingestion.service.dto.SearchParameterNews;
+import com.news.ingestion.service.exceptions.LogicalAppException;
 import com.news.ingestion.service.model.api.ArticleItem;
 import com.news.ingestion.service.model.api.NewsResult;
 import com.news.ingestion.service.services.api.ApiNewsManageFetchService;
@@ -32,9 +33,9 @@ public class NewsFetchServiceImpl implements NewsFetchService {
                 .fetchMonoObject(urlSearch, NewsResult.class)
                 .map(NewsResult::getTotalResults)
                 .doOnNext(totalResults -> log.info("Total results fetched: {}", totalResults))
-                .onErrorResume(e -> {
-                    log.error("Error fetching total results", e);
-                    return Mono.just(0L);
+                .onErrorMap(ex -> {
+                    log.error("Error fetching total results: {}", ex.getMessage());
+                    return new LogicalAppException("Error fetching total results", ex.getMessage(), false);
                 });
     }
 
@@ -58,9 +59,10 @@ public class NewsFetchServiceImpl implements NewsFetchService {
                     }
                     return Flux.fromIterable(newsResult.getArticles());
                 })
-                .onErrorResume(e -> {
-                    log.error("Error fetching page data for page {}", page, e);
-                    return Flux.empty();
+                .onErrorMap(ex -> {
+                    log.error("Error fetching page data for page: {}", page, ex);
+                    return new LogicalAppException(String.format("Failed to fetch page data for page %d", page),
+                            ex.getMessage(), false);
                 });
     }
 }

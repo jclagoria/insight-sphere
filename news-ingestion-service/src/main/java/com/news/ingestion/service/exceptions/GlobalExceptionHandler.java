@@ -26,6 +26,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ex.getHttpStatusCode()).body(bodyError);
     }
 
+    @ExceptionHandler(LogicalAppException.class)
+    public ResponseEntity<Map<String, String>> handleLogicalAppException(LogicalAppException ex) {
+        Map<String, String> bodyError = new HashMap<>();
+        bodyError.put("message", ex.getMessage());
+        bodyError.put("status", String.valueOf(ex.isStatus()));
+        bodyError.put("errorMessage", ex.getErrorMessage());
+        bodyError.put("timestamp", Instant.now().toString());
+
+        return ResponseEntity.status(HttpStatus.SC_BAD_REQUEST).body(bodyError);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
         Map<String, String> bodyError = new HashMap<>();

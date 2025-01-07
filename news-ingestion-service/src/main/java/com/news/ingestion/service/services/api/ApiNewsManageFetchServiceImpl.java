@@ -43,7 +43,7 @@ public class ApiNewsManageFetchServiceImpl implements ApiNewsManageFetchService 
 
                             try {
                                 ApiNewsErrorItem errorResponse = objectMapper.readValue(body, ApiNewsErrorItem.class);
-                                log.error("{}: {}", ERROR_API_CALL, errorResponse);
+                                log.error("Error when try to call the API {}: {}", ERROR_API_CALL, errorResponse);
 
                                 return Mono.error(new NewsApiException(
                                         ERROR_API_CALL,
@@ -64,7 +64,7 @@ public class ApiNewsManageFetchServiceImpl implements ApiNewsManageFetchService 
                             }
                         }))
                 .bodyToMono(responseType)
-                .doOnError(e -> log.error("{}: {}", ERROR_API_CALL, e.getMessage()));
+                .doOnError(e -> log.error("Error when try to call the API {}: {}", ERROR_API_CALL, e.getMessage()));
     }
 
 }

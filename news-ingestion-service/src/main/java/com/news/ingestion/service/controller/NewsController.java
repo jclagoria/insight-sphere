@@ -1,5 +1,6 @@
 package com.news.ingestion.service.controller;
 
+import com.news.ingestion.service.dto.IngestionResponse;
 import com.news.ingestion.service.dto.SearchParameterNews;
 import com.news.ingestion.service.services.NewsIngestionService;
 import lombok.AllArgsConstructor;
@@ -18,12 +19,12 @@ public class NewsController {
     private NewsIngestionService newsIngestionService;
 
     @GetMapping("/ingest")
-    public Mono<Void> ingestNews(@RequestParam String query) {
+    public Mono<IngestionResponse> ingestNews(@RequestParam String query) {
 
         SearchParameterNews params = new SearchParameterNews(query, null, null, null,
                 null, null, null, null, null, 0, 0);
 
-        return newsIngestionService.fetchNewsIngestion(params);
+        return newsIngestionService.fetchNewsIngestionBatch(params);
     }
 
 }
